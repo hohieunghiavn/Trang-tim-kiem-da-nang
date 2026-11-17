@@ -42,7 +42,7 @@ body.dark-mode::before {
 .top-widget-bar { box-shadow: var(--e2), inset 0 1px 0 var(--hl); }
 
 /* Level 1: panel workspace — Level 3: hộp thoại đang mở */
-#notesWorkspace, #cameraWorkspace, #matrixWorkspace, #cppWorkspace { box-shadow: var(--e1), inset 0 1px 0 var(--hl); }
+#notesWorkspace, #cameraWorkspace, #matrixWorkspace, #cppWorkspace, #quizWorkspace { box-shadow: var(--e1), inset 0 1px 0 var(--hl); }
 .auth-card { box-shadow: var(--e3), inset 0 1px 0 var(--hl); }
 
 /* Thẻ tiện ích */
@@ -60,7 +60,7 @@ body.dark-mode::before {
 /* Mở workspace / hộp thoại: chỉ mờ + trượt nhẹ (không giữ transform sau khi xong) */
 @keyframes ws-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: no-preference) {
-    #notesWorkspace, #cameraWorkspace, #matrixWorkspace, #cppWorkspace, .auth-card { animation: ws-in .24s ease-out backwards; }
+    #notesWorkspace, #cameraWorkspace, #matrixWorkspace, #cppWorkspace, #quizWorkspace, .auth-card { animation: ws-in .24s ease-out backwards; }
 }
 
 /* Máy yếu / màn nhỏ: bớt chiều sâu, tắt vầng sáng chuyển động */
@@ -100,7 +100,7 @@ body.dark-mode .searchbar { border-color: rgba(var(--glow),.30); }
     padding: 10px 12px; border: 1px solid rgba(var(--glow),.18); border-radius: 14px;
     background: color-mix(in srgb, var(--surface) 70%, transparent); box-shadow: var(--e1), inset 0 1px 0 var(--hl);
 }
-body.dark-mode :is(#notesWorkspace, #cameraWorkspace, #matrixWorkspace, #cppWorkspace) {
+body.dark-mode :is(#notesWorkspace, #cameraWorkspace, #matrixWorkspace, #cppWorkspace, #quizWorkspace) {
     background: rgba(48,49,52,.9); border-color: rgba(var(--glow),.25);
 }
 

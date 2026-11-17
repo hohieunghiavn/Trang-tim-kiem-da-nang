@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kiến trúc máy tính | Ôn tập & Thi thử 85 câu</title>
+<style>
+:root{
+ --bg:#07111f;--fg:#edf5ff;--mut:#a9bad0;--card:rgba(19,35,58,.82);--line:rgba(159,190,226,.2);
+ --ac:#54d6c5;--ok:#49d89a;--okb:rgba(40,190,125,.16);--no:#ff777f;--nob:rgba(255,90,100,.15);
+ --shadow:0 18px 50px rgba(0,0,0,.28);--glass:rgba(255,255,255,.055)
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--fg);font:15px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ background:radial-gradient(ellipse at 12% 5%,#173d59 0,transparent 36%),radial-gradient(ellipse at 88% 18%,#183b50 0,transparent 32%),linear-gradient(145deg,#07111f,#0b1728 55%,#101b31);background-attachment:fixed}
+button,input{font:inherit}
+.w{max-width:1180px;margin:0 auto;padding:30px 22px 70px}
+h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.15;letter-spacing:-.04em;margin:10px 0}
+h2{font-size:1.2rem;line-height:1.45;margin:12px 0 18px}
+p{margin:0 0 12px}.m{color:var(--mut);font-size:.92rem}
+.hero,.panel,.stat,.question-card,.side-card,.result-card{background:linear-gradient(145deg,rgba(27,49,76,.88),rgba(13,27,46,.88));border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+.hero{padding:clamp(22px,4vw,38px);position:relative;overflow:hidden;transform-style:preserve-3d}
+.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-110px;background:radial-gradient(circle,rgba(84,214,197,.22),transparent 68%);pointer-events:none}
+.eyebrow{color:var(--ac);font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.75rem}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;margin:18px 0}
+.stat{grid-column:span 3;padding:18px;min-height:110px;transition:transform .2s,border-color .2s}
+.stat:hover,.panel:hover,.question-card:hover{transform:translateY(-3px);border-color:rgba(84,214,197,.45)}
+.stat strong{display:block;font-size:1.8rem;line-height:1.2;margin-top:7px}
+.panel{padding:22px;margin:16px 0}
+button{color:var(--fg);cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:11px 15px;background:linear-gradient(145deg,rgba(39,67,98,.9),rgba(19,39,64,.95));transition:transform .16s,border-color .16s,filter .16s}
+button:hover:not(:disabled){transform:translateY(-2px);border-color:var(--ac);filter:brightness(1.12)}
+button:active:not(:disabled){transform:translateY(0)}
+button:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+button:disabled{cursor:default;opacity:.78}
+.primary{background:linear-gradient(135deg,#38bcae,#187e83);border-color:transparent;color:#031b22;font-weight:800;text-align:center}
+.ghost{background:var(--glass)}
+.danger{border-color:rgba(255,119,127,.45);color:#ffb2b6}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.actions button{width:auto}
+.mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+.mode{padding:20px;text-align:left;min-height:118px}
+.mode b{display:block;font-size:1.05rem;margin-bottom:5px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.bar{height:8px;background:rgba(255,255,255,.1);border-radius:99px;margin:12px 0 20px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#38bcae,#9bf0d6);border-radius:99px;transition:width .25s}
+.exam-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px;align-items:start}
+.question-card{padding:clamp(18px,3vw,30px);min-width:0}
+.side-card{padding:18px;position:sticky;top:14px}
+.option{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;margin:10px 0;padding:14px 16px;background:rgba(255,255,255,.045)}
+.letter{flex:0 0 28px;height:28px;display:grid;place-items:center;border-radius:9px;background:rgba(84,214,197,.13);color:var(--ac);font-weight:800}
+.option.ok{background:var(--okb);border-color:var(--ok)}.option.no{background:var(--nob);border-color:var(--no)}
+.feedback{border-left:3px solid var(--ac);background:rgba(84,214,197,.08);padding:14px 16px;margin:16px 0;border-radius:0 12px 12px 0}
+.qnav{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:12px}
+.qnav button{padding:8px 2px;text-align:center;font-size:.85rem}
+.qnav .answered{border-color:#4fc99b;background:rgba(73,216,154,.16)}
+.qnav .wrong{border-color:var(--no);background:var(--nob)}
+.qnav .current{outline:2px solid var(--ac);outline-offset:1px}
+.timer{font-variant-numeric:tabular-nums;font-size:1.3rem;font-weight:850;color:var(--ac)}
+.timer.warn{color:#ffb36b}
+.big{font-size:clamp(2.6rem,7vw,4rem);font-weight:900;letter-spacing:-.05em;line-height:1.1;margin:12px 0}
+.review-row{padding:16px 0;border-bottom:1px solid var(--line)}
+.review-row:last-child{border:0}
+.tag{display:inline-block;padding:3px 9px;border-radius:99px;font-size:.78rem;background:var(--glass);color:var(--mut)}
+.tag.good{color:#8ce8b7;background:var(--okb)}.tag.bad{color:#ff9ca2;background:var(--nob)}
+input[type=number]{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.18);color:var(--fg)}
+.empty{padding:26px;text-align:center;color:var(--mut)}
+.topic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.topic-card{padding:18px;text-align:left;min-height:150px;display:flex;flex-direction:column;gap:8px}
+.topic-card b{font-size:1rem;line-height:1.35}
+.topic-card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:auto;gap:8px;flex-wrap:wrap}
+.kbd-hint{font-size:.78rem;color:var(--mut);margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.kbd-hint kbd{background:rgba(84,214,197,.12);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.75rem;color:var(--ac)}
+@media(max-width:800px){.stat{grid-column:span 6}.exam-layout{grid-template-columns:1fr}.side-card{position:static}.qnav{grid-template-columns:repeat(10,1fr)}.topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.w{padding:18px 13px 50px}.mode-grid{grid-template-columns:1fr}.stat{grid-column:span 6}.panel,.question-card,.side-card{border-radius:15px;padding:16px}.qnav{grid-template-columns:repeat(7,1fr)}.topic-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+</style></head><body><div class="w" id="app"></div>
+<script>
+// [câu hỏi, "A|B|C|D", đáp án đúng, hướng giải]. Đáp án do AI suy ra từ nội dung môn học, câu ghi "chưa chắc" cần đối chiếu slide.
+const Q=[
+["Trước khi sử dụng transistor, linh kiện dùng cho mạch chuyển (switch) là:","Kim loại|Bóng đèn chân không|Bóng đèn bình thường|IC điện tử","b","Máy tính đầu tiên dùng bóng đèn chân không làm công tắc; transistor thay thế sau đó."],
+["Chip thường được đóng gói bằng vỏ nhựa và giao tiếp với bên ngoài thông qua:","các cổng|các transistor|các IC|các pin","d","Chip giao tiếp ra ngoài bằng các chân (pin) nhô ra từ vỏ."],
+["Chip DIP có cấu tạo pin:","2 bộ pin xếp cạnh nhau|Xoay quanh tâm vuông ở đáy chip|Phủ ở 4 cạnh|Tất cả đều sai","a","DIP = 2 hàng pin song song. PGA = pin quanh tâm vuông ở đáy. PQFP = pin phủ 4 cạnh."],
+["Chip PGA có cấu tạo pin:","2 bộ pin xếp cạnh nhau|Xoay quanh tâm vuông ở đáy chip|Phủ ở 4 cạnh|Tất cả đều sai","b","PGA: pin xếp xoay quanh tâm vuông ở đáy chip."],
+["Chip PQFP có cấu tạo pin:","2 bộ pin xếp cạnh nhau|Xoay quanh tâm vuông ở đáy chip|Phủ ở 4 cạnh|Tất cả đều sai","c","PQFP: pin phủ cả 4 cạnh của chip."],
+["Số lượng pin trên một chip là:","0|1|Khá nhiều, thường không quá 1000|Rất nhiều, trên 1000","c","Một chip có vài chục đến vài trăm pin, thường không quá 1000."],
+["Số transistor trên một cổng là:","0|1|Thường từ 0 đến 6|Thường nhiều hơn 6","c","Một cổng lôgic cơ bản chỉ cần vài transistor (tối đa khoảng 6)."],
+["Số lượng pin trên một mạch chuyển là:","0|1|Khá nhiều, thường không quá 1000|Rất nhiều, trên 1000","a","Mạch chuyển (transistor bên trong chip) không có pin riêng, pin thuộc về chip. Chưa chắc, đối chiếu slide."],
+["Cổng (gate):","Là phần tử lôgic cơ bản|Gồm nhiều tín hiệu vào và 1 tín hiệu ra|Cả a và b đều sai|Cả a và b đều đúng","d","Cổng là phần tử lôgic cơ bản, nhiều ngõ vào và 1 ngõ ra, nên a và b đều đúng."],
+["Các phép lôgic cơ bản là:","AND, OR, NOT, NAND|XOR, OR, AND, NOR|AND, OR, NOT, XOR|AND, OR, NAND, NOR","c","Chỉ phương án (c) có đủ bộ AND, OR, NOT."],
+["Mạch lôgic tổ hợp là mạch:","Không lặp, không nhớ|Có lặp, có nhớ|Không lặp, có nhớ|Có lặp, không nhớ","a","Ngõ ra chỉ phụ thuộc ngõ vào hiện tại nên không lặp, không nhớ (decoder, mux, demux)."],
+["Mạch giải mã nhị phân (binary decoder) là mạch:","Đổi số nhị phân thành số thập phân|Đổi số nhị phân thành số thập lục phân|Đổi số nhị phân thành số nhất phân|Đổi số thập phân thành số nhị phân","c","Decoder n bit cho 2^n ngõ ra, chỉ 1 ngõ bằng 1 (mã nhất phân)."],
+["Mạch phân kênh (Demultiplextor) là mạch:","Dùng trong điện thoại|Dùng trong TV|Nối nhiều thiết bị xuất với 1 nhập|Nối nhiều thiết bị nhập với 1 xuất","c","Demux: 1 ngõ nhập chia ra nhiều ngõ xuất."],
+["Mạch dồn kênh (Multiplextor) là mạch:","Dùng trong điện thoại|Dùng trong TV|Nối nhiều thiết bị xuất với 1 nhập|Nối nhiều thiết bị nhập với 1 xuất","d","Mux: chọn 1 trong nhiều ngõ nhập đưa ra 1 ngõ xuất."],
+["Mạch lôgic tuần tự là mạch:","Không lặp, không nhớ|Có lặp, có nhớ|Không lặp, có nhớ|Có lặp, không nhớ","b","Mạch tuần tự có lặp (phản hồi) và có nhớ: flip-flop, thanh ghi, mạch đếm."],
+["Mạch lật (Flipflop) là:","Mạch nhớ đơn giản nhất|Mạch lật chỉ có thể lưu 1 bit|Lưu một trị luận lý đúng hoặc sai|Tất cả đều đúng","d","Cả ba phát biểu a, b, c đều mô tả đúng flip-flop."],
+["Mạch lật (Flipflop) có thể:","Lưu trữ 1 byte|Lưu trữ 1 bit|Điều chỉnh tốc độ dữ liệu|Điều chỉnh số lượng dữ liệu","b","Một flip-flop lưu đúng 1 bit; 1 byte cần 8 flip-flop."],
+["Mạch lật (Flipflop) SR có:","1 đường vào và 1 đường ra|1 đường vào và 2 đường ra|2 đường vào và 2 đường ra|số đường vào ra tùy theo thiết kế","c","SR có 2 ngõ vào (S, R) và 2 ngõ ra (Q và Q đảo)."],
+["Mạch lật SR có ngõ vào S và R đều cao thì:","Không thay đổi trạng thái|Chuyển sang trạng thái 1|Chuyển sang trạng thái 0|Trạng thái không xác định","d","S = R = 1 là tổ hợp cấm, kết quả không xác định."],
+["Mạch lật SR có ngõ vào S và R đều bằng 0 thì:","Không thay đổi trạng thái|Chuyển sang trạng thái 1|Chuyển sang trạng thái 0|Trạng thái không xác định","a","S = R = 0: chế độ giữ, trạng thái cũ được bảo toàn."],
+["Mạch lật SR có ngõ vào S = 1 và R = 0 thì:","Không thay đổi trạng thái|Chuyển sang trạng thái 1|Chuyển sang trạng thái 0|Trạng thái không xác định","b","S = Set: đặt Q = 1."],
+["Mạch lật SR có ngõ vào S = 0 và R = 1 thì:","Không thay đổi trạng thái|Chuyển sang trạng thái 1|Chuyển sang trạng thái 0|Trạng thái không xác định","c","R = Reset: đặt Q = 0."],
+["Mạch tạo đồng hồ (Clock generator) là:","Phát tín hiệu thời gian|Ghi nhịp|Phát tín hiệu dạng đồng nhất và cùng khoản thời gian|Ghi giờ","c","Clock phát xung giống nhau, lặp đều theo chu kỳ để đồng bộ các mạch."],
+["Mạch đếm là:","Thanh ghi có thể tăng hoặc giảm nội dung của nó|Thanh ghi có thể dịch các bit về trái hoặc phải|Mạch nhị phân n bit|Mạch làm tăng kích thước của mạch đếm khác","a","Mạch đếm = thanh ghi tăng/giảm nội dung. Thanh ghi dịch mới là dịch bit."],
+["Ngăn xếp cứng (Stack) là thiết bị lưu trữ danh sách các phần tử theo kiểu:","Vào trước ra trước|Vào sau ra trước|Vào sau ra sau|Tất cả đều sai","b","Stack là LIFO (vào sau ra trước). Vào trước ra trước là hàng đợi (queue)."],
+["Hệ thống gồm: đơn vị xử lý trung tâm, hệ thống lưu trữ, hệ thống nhập xuất thuộc về:","Kiến trúc bộ lệnh (ISA)|Kiến trúc hệ thống phần cứng (HSA)|Kiến trúc hệ thống phần mềm|Kiến trúc hệ máy tính","b","CPU, bộ nhớ, hệ nhập xuất là các khối phần cứng, thuộc HSA."],
+["Các đặc tả quy định cách thức lập trình viên ngôn ngữ máy giao tiếp với máy thuộc về:","Kiến trúc bộ lệnh (ISA)|Kiến trúc hệ thống phần cứng (HSA)|Kiến trúc hệ thống phần mềm|Kiến trúc hệ máy tính","a","ISA là giao diện giữa phần mềm (ngôn ngữ máy) và phần cứng."],
+["Họ máy tính là tập hợp các cài đặt có cùng:","HSA|ISA|CPU|RAM","b","Cùng ISA thì chạy được cùng phần mềm máy, nên cùng họ."],
+["Kiến trúc máy tính có thể phân loại gồm các loại sau:","Tuần tự và song song|Đơn tác và đa tác|Đơn lệnh và đa lệnh|Von Neumann và phi Von Neumann","d","Đề cương nhấn mạnh kiến trúc Von Neumann và phi Von Neumann. Chưa chắc, đối chiếu slide."],
+["Thanh ghi (register) là:","Thiết bị lưu trữ dữ liệu và cung cấp chúng cho các mạch khác|Thiết bị điều khiển mạch lật và ngỏ ra|Thiết bị lưu 1 bit|Tất cả đều đúng","a","Thanh ghi lưu dữ liệu (nhiều bit) và cung cấp cho mạch khác. (c) sai vì đó là flip-flop."],
+["Ích lợi quan trọng nhất của tính tương thích về phần mềm là","Tiết kiệm thời gian phát triển phần mềm khi mua máy tính mới|Bảo toàn phí tổn đã đầu tư về phần mềm cho khách hàng|Đẩy mạnh sự phát triển của công nghệ chế tạo máy tính|Tất cả đều đúng","b","Khách hàng giữ được phần mềm đã mua khi nâng cấp máy."],
+["Thanh ghi được tổ chức ở:","ROM BIOS|CPU|RAM|Bộ nhớ phụ","b","Thanh ghi nằm bên trong CPU."],
+["Thanh ghi dịch là thanh ghi có khả năng dịch thông tin nhị phân","sang thập phân|sang thập lục phân|sang thập phân và ngược lại|theo 1 hoặc cả 2 hướng","d","Thanh ghi dịch dịch các bit sang trái, sang phải hoặc cả hai hướng."],
+["Đối với máy tính, chương trình là:","Một tập hợp các phép toán|Dãy lệnh nhị phân máy tính phải thi hành chính xác|Dãy những con số nguyên nhị phân 8 bit|Những gì máy tính hiểu","b","Chương trình là dãy lệnh nhị phân mà máy phải thực hiện chính xác."],
+["Mỗi đơn vị cơ bản của thông tin trên máy tính thường dùng để lưu:","1 lệnh|1 ký tự|1 số thực|1 địa chỉ","b","Đơn vị cơ bản là byte (8 bit): chứa 1 ký tự hoặc số nguyên nhỏ."],
+["Kích thước từ (word) của máy là:","8 bit|16 bit|kích thước của thanh ghi tác vụ|Do ngôn ngữ lập trình quy định","c","Word phụ thuộc máy, bằng độ rộng thanh ghi xử lý, không cố định 8 hay 16 bit."],
+["Bộ nhớ có 4096 từ 16 bit, số bit địa chỉ là:","10|12|14|16","b","4096 = 2^12 nên cần 12 bit. Độ rộng từ (16 bit) không ảnh hưởng."],
+["Số nhị phân 1011110001 có biểu diễn tương ứng bên hệ thập lục phân là","2F1|BC1|BC4|2E1","a","Nhóm 4 bit từ phải: 10|1111|0001 = 2|F|1 = 2F1."],
+["Số nhị phân 1011100001 có biểu diễn tương ứng bên hệ thập lục phân là","2F1|BC1|BC4|2E1","d","Nhóm 4 bit từ phải: 10|1110|0001 = 2|E|1 = 2E1."],
+["Số 101000101101 ở hệ nhị phân đổi sang thập lục phân sẽ là:","7B9|A2D|A3D|AB2","b","1010|0010|1101 = A|2|D = A2D."],
+["Số F9B3 ở hệ thập lục phân, chuyển sang nhị phân là:","1111100100001111|1111100100011111|1111100110110011|1111100110111011","c","F=1111, 9=1001, B=1011, 3=0011, ghép lại: 1111 1001 1011 0011."],
+["Bit dấu của số nguyên lượng có dấu là:","Bit trái nhất|Bit phải nhất|Bit 1 đầu tiên|Tùy thiết kế","a","Bit trái nhất (MSB): 0 là dương, 1 là âm."],
+["Mã ASCII mở rộng sử dụng","7 bit|8 bit|12 bit|16 bit","b","ASCII chuẩn dùng 7 bit (128 ký tự), mở rộng dùng 8 bit (256 ký tự)."],
+["Hệ thống bus dùng cho k thanh ghi n bit sẽ có:","k mạch dồn n - 1|n mạch dồn k - 1|k mạch dồn 1 - n|n mạch dồn 1 - k","b","Mỗi bit cần 1 mạch dồn chọn 1 trong k thanh ghi: n mạch dồn k–1."],
+["Hệ thống bus cho 16 thanh ghi 32 bit tạo từ các mạch dồn. Số ngõ nhập chọn cho mỗi mạch dồn là:","2|3|4|5","c","16 thanh ghi cần log2(16) = 4 ngõ chọn."],
+["Hệ thống bus cho 16 thanh ghi 32 bit tạo từ các mạch dồn. Kích cở các mạch dồn là:","16 - 32|32 - 16|16 - 1|32 - 1","c","k = 16 thanh ghi nên mạch dồn 16–1 (16 ngõ nhập, 1 ngõ xuất)."],
+["Trong các thanh ghi trong máy tính cơ bản, thanh ghi AR để:","chứa địa chỉ bộ nhớ|chứa dữ liệu cần tính toán|chứa kết quả tính toán|tất cả đều sai","a","AR (Address Register) giữ địa chỉ bộ nhớ."],
+["Trong các thanh ghi trong máy tính cơ bản, thanh ghi DR để:","chứa địa chỉ bộ nhớ|chứa dữ liệu cần tính toán|chứa kết quả tính toán|tất cả đều sai","b","DR (Data Register) giữ tác tố đọc từ bộ nhớ để tính toán."],
+["Trong các thanh ghi trong máy tính cơ bản, thanh ghi AC để:","chứa địa chỉ bộ nhớ|chứa dữ liệu cần tính toán|chứa kết quả tính toán|tất cả đều sai","c","AC (Accumulator) giữ kết quả tính toán."],
+["Trong các thanh ghi trong máy tính cơ bản, thanh ghi PC để:","chứa địa chỉ bộ nhớ|chứa dữ liệu cần tính toán|chứa kết quả tính toán|tất cả đều sai","a","PC giữ địa chỉ (trong bộ nhớ) của lệnh kế tiếp, nên trong các lựa chọn này chọn (a)."],
+["Khi phần 2 của mã lệnh là địa chỉ của từ nhớ chứa tác tố, đó là địa chỉ:","gián tiếp|trực tiếp|nối tiếp|liên kết","b","Địa chỉ chỉ thẳng tới tác tố là địa chỉ trực tiếp."],
+["Hệ thống bus cho 16 thanh ghi 32 bit tạo từ các mạch dồn. Số mạch dồn trong bus là:","32|16|16 x 32|16 - 1","a","Mỗi bit 1 mạch dồn: n = 32 mạch."],
+["Mã lệnh 111 và I = 0 ứng với lệnh:","tham chiếu thanh ghi|nhập xuất|tham chiếu bộ nhớ|tham chiếu bộ nhớ địa chỉ gián tiếp","a","111 + I=0: tham chiếu thanh ghi."],
+["Mã lệnh 111 và I = 1 ứng với lệnh:","tham chiếu thanh ghi|nhập xuất|tham chiếu bộ nhớ|tham chiếu bộ nhớ địa chỉ gián tiếp","b","111 + I=1: nhập xuất."],
+["Mã lệnh khác 111 và I = 0 ứng với lệnh:","tham chiếu thanh ghi|nhập xuất|tham chiếu bộ nhớ|tham chiếu bộ nhớ địa chỉ gián tiếp","c","Mã khác 111 là tham chiếu bộ nhớ; I = 0 là địa chỉ trực tiếp."],
+["Mã lệnh khác 111 và I = 1 ứng với lệnh:","tham chiếu thanh ghi|nhập xuất|tham chiếu bộ nhớ|tham chiếu bộ nhớ địa chỉ gián tiếp","d","Mã khác 111 và I = 1: tham chiếu bộ nhớ địa chỉ gián tiếp."],
+["Khi phần 2 của mã lệnh là địa chỉ của từ nhớ chứa địa chỉ của tác tố, đó là địa chỉ:","gián tiếp|trực tiếp|nối tiếp|liên kết","a","Phải đọc thêm một lần để lấy địa chỉ tác tố: địa chỉ gián tiếp."],
+["Trong quá trình truyền thông, chế độ ngắt (interrupt) là:","máy báo cho thiết bị khi nào sẵn sàng truyền|thiết bị báo cho máy khi nào sẵn sàng truyền|thiết bị này báo cho thiết bị kia khi nào sẵn sàng truyền|tất cả đều sai","b","Ngắt: thiết bị chủ động báo cho CPU khi nó sẵn sàng."],
+["Trạm cuối gửi và nhận thông tin dưới hình thức:","nối tiếp|song song|tuần tự|ngắt quãng","a","Trạm cuối (terminal) truyền nối tiếp, từng bit."],
+["Đơn vị gửi thông tin với thiết bị xuất là:","1 bit|4 bit|8 bit|16 bit","c","Mỗi lần gửi 1 ký tự = 8 bit (thanh ghi OUTR 8 bit). Chưa chắc, đối chiếu slide."],
+["Đơn vị nhận thông tin từ thiết bị nhập là:","1 bit|4 bit|8 bit|16 bit","c","Mỗi lần nhận 1 ký tự = 8 bit (thanh ghi INPR 8 bit). Chưa chắc, đối chiếu slide."],
+["Tác vụ truyền thông tin từ một từ nhớ ra ngoài gọi là tác vụ:","ghi|đọc|nạp|tải","b","Lấy thông tin ra khỏi bộ nhớ là đọc."],
+["Tác vụ đưa thông tin mới vào bộ nhớ gọi là tác vụ:","ghi|đọc|nạp|tải","a","Đưa thông tin mới vào bộ nhớ là ghi."],
+["Tác vụ truyền nội dung thanh ghi R1 vào bộ nhớ có ký hiệu là:","M[AC] <- R1|M[R1] <- R1|M[AR] <- R1|R1 -> M[R1]","c","Địa chỉ ô nhớ luôn nằm ở AR, nên ghi là M[AR] ← R1."],
+["Tác vụ truyền nội dung bộ nhớ đến thanh ghi R1 có ký hiệu là:","R1 <- M[AC]|M[R1] <- R1|M[AC] <- R1|R1 <- M[AR]","d","Đọc ô nhớ do AR trỏ tới vào R1: R1 ← M[AR]."],
+["Trong các cấp bộ nhớ, cấp cao ứng với bộ nhớ:","tốc độ nhanh, dung lượng lớn|tốc độ nhanh, dung lượng nhỏ|tốc độ chậm, dung lượng lớn|tốc độ chậm, dung lượng nhỏ","b","Càng gần CPU: càng nhanh, nhỏ, đắt (thanh ghi, cache)."],
+["Trong các cấp bộ nhớ, cấp thấp ứng với bộ nhớ:","tốc độ nhanh, dung lượng lớn|tốc độ nhanh, dung lượng nhỏ|tốc độ chậm, dung lượng lớn|tốc độ chậm, dung lượng nhỏ","c","Càng xa CPU (đĩa): chậm, lớn, rẻ."],
+["Bộ nhớ cache là:","dạng bộ nhớ chỉ đọc|bộ nhớ đệm giữa RAM và CPU|chip nhớ dạng ROM|bộ nhớ ảo","b","Cache là bộ nhớ đệm nhanh nằm giữa CPU và RAM."],
+["Nếu tỉ lệ tìm trúng của bộ nhớ cache thấp thì:","Thời gian truy cập bộ nhớ của CPU tăng lên|Thời gian truy cập bộ nhớ của CPU giảm xuống|Thời gian truy cập bộ nhớ của CPU không xác định|Thời gian truy cập bộ nhớ của CPU tùy thuộc tốc độ của bộ nhớ và CPU","a","Trúng ít thì phải xuống RAM chậm nhiều lần, nên thời gian truy cập trung bình tăng."],
+["Việc chuyển dữ liệu giửa bộ xử lý và cache là theo từng:","từ|khối|đoạn|trang","a","CPU ↔ cache theo từ; cache ↔ RAM theo khối."],
+["Việc chuyển dữ liệu giửa cache và bộ nhớ trong là theo từng:","từ|khối|đoạn|trang","b","Cache ↔ RAM theo khối (tận dụng tính cục bộ)."],
+["Sự thay thế một khối trong cache được điều khiển bởi:","thanh ghi lệnh|bộ xử lý|phần cứng riêng|hệ điều hành","c","Cache cần rất nhanh nên thay khối bằng phần cứng riêng."],
+["Bộ nhớ ảo là cơ chế vận chuyển tự động số liệu giữa:","CPU và bộ nhớ ngoài (đĩa từ)|bộ nhớ trong và bộ nhớ ngoài (đĩa từ)|CPU và cache|cache và bộ nhớ ngoài","b","Bộ nhớ ảo tự động chuyển trang giữa RAM và đĩa."],
+["Sự thay thế trang trong kỹ thuật bộ nhớ ảo được điều khiển bởi:","thanh ghi lệnh|bộ xử lý|phần cứng riêng|hệ điều hành","d","Thay trang bộ nhớ ảo do hệ điều hành quản lý."],
+["Hiện nay, trong một số hệ thống máy tính, bus nối ngoại vi được phân cấp thành 2 hệ thống bus con là:","bus chung và bus riêng|bus ngoại vi và bus nội vi|bus tốc độ cao và bus mở rộng|bus cục bộ và bus toàn cục","c","Thiết bị nhanh nối bus tốc độ cao, thiết bị chậm nối bus mở rộng."],
+["Có hai loại bus:","bus độc lập và bus phụ thuộc|bus hệ thống và bus chi tiết|bus tập trung và bus phân tán|bus hệ thống và bus ngoại vi","d","Hai loại bus: bus hệ thống và bus ngoại vi."],
+["Bus hệ thống là loại bus","đối xứng|không đối xứng|đồng bộ|không đồng bộ","c","Bus hệ thống chạy theo xung nhịp chung nên là đồng bộ."],
+["Bus vào / ra là loại bus","đối xứng|không đối xứng|đồng bộ|không đồng bộ","d","Ngoại vi có tốc độ khác nhau nên dùng bắt tay, là không đồng bộ."],
+["Đơn vị lưu trữ thông tin nhỏ nhất trên đĩa về mặt vật lý là:","track|sector|cluster|cyclinder","b","Sector (thường 512 B). Cluster là đơn vị logic của hệ điều hành."],
+["Trên đĩa cứng các rãnh có cùng đường kính trên các mặt đĩa tạo thành:","track|sector|cluster|cyclinder","d","Cylinder = tập các track cùng vị trí trên mọi mặt đĩa."],
+["Trong việc ghi đĩa với mật độ đều:","các track có cùng số sector|các track có số sector khác nhau|các track có đường kính khác nhau|các sector chứa lượng dữ liệu như nhau","a","Hiểu theo đề: mật độ đều thì mỗi track có cùng số sector. Chưa chắc, đối chiếu slide."],
+["Trong việc ghi đĩa với mật độ không đều:","các track có cùng số sector|các track có số sector khác nhau|các track có đường kính khác nhau|các sector chứa lượng dữ liệu khác nhau","b","Hiểu theo đề: mật độ không đều thì track ngoài có nhiều sector hơn. Chưa chắc, đối chiếu slide."],
+["Một sector trong hệ điều hành DOS chứa được:","128 byte|256 byte|512 byte|1024 byte","c","1 sector = 512 byte."],
+["Với một đĩa mềm có dung lượng 1,2MB, số track là 80, số sector trên 1 track là:","10|12|15|30","c","1,2 MB = 80 track × 2 mặt × S × 512 B, nên S = 1 228 800 / (160 × 512) = 15."],
+["Tốc độ 20X của đĩa quang ứng với:","2000 KB/s|2048 KB/s|3000 KB/s|4000 KB/s","c","1X = 150 KB/s, nên 20X = 20 × 150 = 3000 KB/s."]
+];
+
+// Chia 85 câu thành 9 phần theo chủ đề (mỗi phần ~10 câu). from/to là chỉ số mảng (0-based).
+const TOPICS=[
+ {name:"Linh kiện bán dẫn & Chip", from:0,  to:9,  desc:"Transistor, đóng gói chip, DIP/PGA/PQFP, pin, cổng logic"},
+ {name:"Mạch logic tổ hợp & tuần tự", from:10, to:18, desc:"Decoder, Mux/Demux, Flip-flop, mạch tuần tự"},
+ {name:"Flip-flop SR, Clock & Stack", from:19, to:26, desc:"Trạng thái SR, Clock, mạch đếm, Stack, HSA/ISA"},
+ {name:"Kiến trúc hệ thống & Thanh ghi", from:27, to:36, desc:"Họ máy, ISA, thanh ghi, chương trình, word, địa chỉ bộ nhớ"},
+ {name:"Biểu diễn số & Hệ đếm", from:37, to:45, desc:"Nhị phân ↔ thập lục phân, bit dấu, ASCII, hệ thống bus cơ bản"},
+ {name:"Thanh ghi CPU & Mã lệnh", from:46, to:56, desc:"AR/DR/AC/PC, địa chỉ trực tiếp/gián tiếp, mã lệnh 111 & bit I"},
+ {name:"Nhập xuất & Truyền thông", from:57, to:64, desc:"Ngắt, trạm cuối, INPR/OUTR, ký hiệu đọc/ghi, truyền thanh ghi"},
+ {name:"Bộ nhớ (Cache & Ảo) & Bus", from:65, to:77, desc:"Phân cấp bộ nhớ, cache, bộ nhớ ảo, bus hệ thống/ngoại vi"},
+ {name:"Đĩa từ & Đĩa quang", from:78, to:84, desc:"Sector, cylinder, mật độ ghi, đĩa mềm, tốc độ CD-ROM"}
+];
+
+const $=id=>document.getElementById(id), L='ABCD', app=$('app');
+const STORE='ktmt85_v2_state', HISTORY='ktmt85_v2_history', TOPICBEST='ktmt85_v2_topicbest';
+let set=[],i=0,score=0,answers={},done=false,deadline=0,timerId=null,mode='practice',settings={limit:45,shuffleQ:true,shuffleA:true};
+let currentOptions=[],currentCorrect='a',currentExplanation='',sessionId=0,topicId=-1;
+const safeParse=(s,f)=>{try{return JSON.parse(s)||f}catch{return f}};
+const persist=()=>{try{localStorage.setItem(STORE,JSON.stringify({set,i,score,answers,done,deadline,mode,settings,sessionId,topicId}))}catch{}};
+const history=()=>safeParse(localStorage.getItem(HISTORY),[]);
+const topicBest=()=>safeParse(localStorage.getItem(TOPICBEST),{});
+const fmt=s=>{s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function el(t,c,x,p){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;if(p)p.appendChild(e);return e}
+function btn(parent,label,cls,fn){const b=el('button',cls,label,parent);b.type='button';b.onclick=fn;return b}
+function shuffle(a){const b=a.slice();for(let k=b.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[b[k],b[j]]=[b[j],b[k]]}return b}
+function topicRange(idx){const t=TOPICS[idx],r=[];for(let k=t.from;k<=t.to;k++)r.push(k);return r}
+function topicCount(idx){const t=TOPICS[idx];return t.to-t.from+1}
+
+// ---- Phím tắt: A/B/C/D (hoặc 1/2/3/4) chọn đáp án, ←/→ chuyển câu, Esc thoát ----
+let keyHandler=null;
+function bindKeys(){unbindKeys();keyHandler=e=>{
+  if(done)return;
+  const k=e.key.toLowerCase();
+  if(['a','b','c','d','1','2','3','4'].includes(k)){
+    const idx=['a','b','c','d','1','2','3','4'].indexOf(k)%4;
+    if(currentOptions.length===4&&!answers[set[i]])choose(currentOptions[idx].k);
+  } else if(k==='arrowleft'&&i>0){i--;persist();show()}
+  else if(k==='arrowright'&&(answers[set[i]]||mode==='exam')){if(i===set.length-1)finish();else{i=Math.min(set.length-1,i+1);persist();show()}}
+  else if(k==='escape'){if(confirm('Thoát về menu? Tiến trình hiện tại sẽ được lưu.'))menu()}
+};document.addEventListener('keydown',keyHandler)}
+function unbindKeys(){if(keyHandler){document.removeEventListener('keydown',keyHandler);keyHandler=null}}
+
+function menu(){
+ clearInterval(timerId);unbindKeys();app.replaceChildren();
+ const h=history(),last=h[h.length-1],tb=topicBest();
+ const hero=el('section','hero',null,app);el('div','eyebrow','Computer architecture • 85 câu • 9 chủ đề',hero);
+ el('h1',null,'Kiểm tra Kiến trúc máy tính',hero);
+ el('p','m','Không gian ôn tập tương tác 3D · Theo dõi tiến độ · Lưu kết quả trên thiết bị · Xáo trộn câu hỏi & đáp án mặc định',hero);
+ const g=el('div','grid',null,app);
+ [[Q.length,'Ngân hàng câu hỏi'],[TOPICS.length,'Phần theo chủ đề'],[h.length,'Lần thi đã lưu'],[last?last.percent+'%':'—','Kết quả gần nhất']].forEach(([v,l])=>{const c=el('div','stat',null,g);el('span','m',l,c);el('strong',null,v,c)});
+ const p=el('section','panel',null,app);el('h2',null,'Bắt đầu ôn tập',p);
+ const mg=el('div','mode-grid',null,p);
+ const modes=[
+ ['Ôn theo chủ đề (9 phần)','Chia 85 câu thành 9 phần ~10 câu, luyện từng chủ đề có giải thích','topic',false],
+ ['Luyện tập 85 câu','Làm theo thứ tự (hoặc xáo trộn), xem giải thích ngay sau mỗi câu','practice',false],
+ ['Luyện tập 30 câu ngẫu nhiên','Tạo bộ câu hỏi ngẫu nhiên từ ngân hàng','practice',true],
+ ['Thi thử có thời gian','Ẩn đáp án đến khi nộp bài, có đồng hồ đếm ngược','exam',true],
+ ['Ôn câu đã trả lời sai','Làm lại những câu sai trong các lần thi đã lưu','wrong',false]
+ ];
+ modes.forEach(([a,b,m,r])=>{const x=btn(mg,'','mode',()=>{if(m==='wrong')startWrong();else if(m==='topic')topicMenu();else start(m,r)});el('b',null,a,x);el('span','m',b,x)});
+ // Tiến độ theo chủ đề
+ const tp=el('section','panel',null,app);el('h2',null,'Tiến độ theo chủ đề',tp);
+ const tg=el('div','topic-grid',null,tp);
+ TOPICS.forEach((t,idx)=>{const best=tb[idx],card=btn(tg,'','topic-card',()=>startTopic(idx));
+   el('b',null,`Phần ${idx+1}: ${t.name}`,card);el('span','m',t.desc,card);
+   const meta=el('div','meta',null,card);el('span','tag',`${topicCount(idx)} câu`,meta);
+   el('span','tag '+(best!=null&&best>=80?'good':best!=null&&best<50?'bad':''),best!=null?`Tốt nhất ${best}%`:'Chưa làm',meta)});
+ const cfg=el('section','panel',null,app);el('h2',null,'Cài đặt đề thi',cfg);
+ el('p','m','Thời gian thi thử (phút)',cfg);const inp=el('input',null,null,cfg);inp.type='number';inp.min='5';inp.max='180';inp.value=settings.limit;inp.onchange=()=>{settings.limit=Math.max(5,Math.min(180,+inp.value||45));persist()};
+ const sh=el('label','m',null,cfg);const cb=el('input',null,null,sh);cb.type='checkbox';cb.checked=settings.shuffleA;cb.onchange=()=>{settings.shuffleA=cb.checked;persist()};sh.append(' Trộn thứ tự đáp án');
+ const sq=el('label','m',null,cfg);const cq=el('input',null,null,sq);cq.type='checkbox';cq.checked=settings.shuffleQ;cq.onchange=()=>{settings.shuffleQ=cq.checked;persist()};sq.append(' Trộn thứ tự câu hỏi');
+ if(h.length){const hp=el('section','panel',null,app);el('h2',null,'Lịch sử kết quả',hp);h.slice(-5).reverse().forEach(x=>{const r=el('p','m',`${new Date(x.date).toLocaleString('vi-VN')} · ${x.score}/${x.total} câu · ${x.percent}% · ${x.mode==='exam'?'Thi thử':x.mode==='topic'?'Ôn chủ đề':'Luyện tập'}`,hp)})}
+ const saved=safeParse(localStorage.getItem(STORE),null);
+ if(saved&&saved.set&&saved.set.length&&!saved.done)btn(p,'Tiếp tục bài đang làm','primary',()=>restore());
+}
+
+function topicMenu(){
+ app.replaceChildren();
+ const hero=el('section','hero',null,app);el('div','eyebrow','Ôn theo chủ đề',hero);
+ el('h1',null,'Chọn phần ôn tập',hero);el('p','m','9 phần, mỗi phần ~10 câu theo chủ đề. Mặc định xáo trộn câu hỏi & đáp án.',hero);
+ const tb=topicBest();
+ const tg=el('div','topic-grid',null,app);
+ TOPICS.forEach((t,idx)=>{const best=tb[idx],card=btn(tg,'','topic-card',()=>startTopic(idx));
+   el('b',null,`Phần ${idx+1}: ${t.name}`,card);el('span','m',t.desc,card);
+   const meta=el('div','meta',null,card);el('span','tag',`Câu ${t.from+1}–${t.to+1} · ${topicCount(idx)} câu`,meta);
+   el('span','tag '+(best!=null&&best>=80?'good':best!=null&&best<50?'bad':''),best!=null?`Tốt nhất ${best}%`:'Chưa làm',meta)});
+ const a=el('div','actions',null,app);btn(a,'Làm tất cả (85 câu)','primary',()=>start('practice',false));btn(a,'Về trang chủ','ghost',menu);
+}
+
+function startTopic(idx){topicId=idx;mode='practice';set=topicRange(idx);if(settings.shuffleQ)set=shuffle(set);answers={};i=0;score=0;done=false;deadline=0;sessionId=Date.now();persist();bindKeys();show()}
+
+function start(m,random){
+ topicId=-1;mode=m;set=Q.map((_,k)=>k);if(random||settings.shuffleQ)set=shuffle(set);if(random)set=set.slice(0,30);
+ answers={};i=0;score=0;done=false;sessionId=Date.now();deadline=m==='exam'?Date.now()+settings.limit*60000:0;
+ persist();bindKeys();show();if(mode==='exam')runTimer();
+}
+function startWrong(){
+ const wrong=new Set();history().forEach(h=>(h.wrong||[]).forEach(n=>wrong.add(n-1)));
+ if(!wrong.size){app.replaceChildren();el('h1',null,'Chưa có câu sai',app);el('p','m','Hãy làm một bài luyện tập hoặc thi thử trước nhé.',app);btn(app,'Về menu','primary',menu);return}
+ topicId=-1;mode='practice';set=Array.from(wrong).filter(n=>n>=0&&n<Q.length);if(settings.shuffleQ)set=shuffle(set);answers={};i=0;score=0;done=false;deadline=0;sessionId=Date.now();persist();bindKeys();show();
+}
+function restore(){const s=safeParse(localStorage.getItem(STORE),null);if(!s)return;({set,i,score,answers,done,deadline,mode,settings,sessionId}=s);topicId=s.topicId??-1;if(done){menu();return}bindKeys();show();if(mode==='exam')runTimer()}
+function runTimer(){clearInterval(timerId);const tick=()=>{const left=Math.ceil((deadline-Date.now())/1000);const t=$('timer');if(t){t.textContent=fmt(left);t.classList.toggle('warn',left<300)}if(left<=0){clearInterval(timerId);finish(true)}};tick();timerId=setInterval(tick,1000)}
+function show(){
+ if(i>=set.length){finish();return}
+ const n=set[i],item=Q[n],q=item[0],opts=item[1].split('|'),correct=item[2].toLowerCase();
+ currentCorrect=correct;currentExplanation=item[3];currentOptions=opts.map((v,k)=>({v,k}));if(settings.shuffleA)currentOptions=shuffle(currentOptions);
+ done=!!answers[n];app.replaceChildren();
+ const top=el('div','top',null,app);
+ const tagTxt=topicId>=0?`Phần ${topicId+1}: ${TOPICS[topicId].name} · Câu ${i+1}/${set.length} · Câu gốc ${n+1}`:`Câu ${i+1}/${set.length} · Câu gốc ${n+1}`;
+ el('span','tag',tagTxt,top);
+ if(mode==='exam'){const tm=el('span','timer',null,top);tm.id='timer';tm.textContent=fmt(Math.max(0,(deadline-Date.now())/1000))}
+ else el('span','tag',`Đúng ${score}`,top);
+ const bar=el('div','bar',null,app);el('i',null,null,bar).style.width=((i+(answers[n]?1:0))/set.length*100)+'%';
+ const layout=el('div','exam-layout',null,app),main=el('section','question-card',null,layout),side=el('aside','side-card',null,layout);
+ el('div','eyebrow',mode==='exam'?'Exam mode':topicId>=0?'Topic practice':'Practice mode',main);el('h2',null,q,main);
+ const optsBox=el('div',null,null,main);
+ currentOptions.forEach(({v,k},pos)=>{const letter=L[pos],b=btn(optsBox,'','option',()=>choose(k));el('span','letter',letter,b);el('span',null,v,b);b.dataset.k=k;
+ if(answers[n]){b.disabled=true;if(k===L.indexOf(correct.toUpperCase()))b.classList.add('ok');else if(k===answers[n].k)b.classList.add('no')}});
+ if(answers[n]&&mode!=='exam')feedback(main,n);
+ const nav=el('div','actions',null,main);
+ if(i>0)btn(nav,'← Câu trước','ghost',()=>{i--;persist();show()});
+ if(mode==='exam')btn(nav,'Đánh dấu xem lại','ghost',()=>{answers[n]=answers[n]||{k:null,flag:true};answers[n].flag=!answers[n].flag;persist();show()});
+ if(answers[n]||mode==='exam')btn(nav,i===set.length-1?'Nộp bài':'Câu tiếp →','primary',()=>{if(i===set.length-1)finish();else{i=Math.min(set.length-1,i+1);persist();show()}});
+ btn(nav,'Thoát','ghost',()=>{if(confirm('Thoát về menu? Tiến trình hiện tại sẽ được lưu.'))menu()});
+ const kh=el('div','kbd-hint',null,main);kh.innerHTML='Phím tắt: <kbd>A</kbd><kbd>B</kbd><kbd>C</kbd><kbd>D</kbd> chọn đáp án · <kbd>←</kbd><kbd>→</kbd> chuyển câu · <kbd>Esc</kbd> thoát';
+ el('h2',null,'Điều hướng câu hỏi',side);el('p','m','Nhấn số câu để chuyển nhanh.',side);
+ const qnav=el('div','qnav',null,side);set.forEach((qidx,j)=>{const a=answers[qidx],b=btn(qnav,String(j+1),'',()=>{i=j;persist();show()});if(a)b.classList.add(a.flag?'':'answered');if(j===i)b.classList.add('current')});
+ el('p','m',`Đã trả lời: ${Object.values(answers).filter(a=>a&&a.k!==null).length}/${set.length}`,side);
+ if(mode==='exam')btn(side,'Nộp bài','primary',()=>finish());
+}
+function choose(k){const n=set[i];if(answers[n]&&answers[n].k!==null)return;answers[n]={k,flag:!!(answers[n]&&answers[n].flag)};if(mode==='practice'){if(k===L.indexOf(currentCorrect.toUpperCase()))score++}persist();show();if(mode==='practice'){const m=$('feedback');if(m)m.scrollIntoView({behavior:'smooth',block:'nearest'})}}
+function feedback(parent,n){const a=answers[n],correct=L.indexOf(Q[n][2].toUpperCase()),box=el('div','feedback',null,parent);el('b',null,a.k===correct?'Chính xác!':`Chưa đúng · Đáp án ${L[correct]}`,box);el('p','m',Q[n][3],box);box.id='feedback'}
+function finish(auto=false){
+ clearInterval(timerId);unbindKeys();const total=set.length;let right=0,wrong=[];
+ set.forEach(n=>{const a=answers[n],c=L.indexOf(Q[n][2].toUpperCase());if(a&&a.k===c)right++;else wrong.push(n+1)});
+ score=right;done=true;const record={date:new Date().toISOString(),score:right,total,percent:Math.round(right/total*100),wrong,mode:topicId>=0?'topic':mode,topicId:topicId>=0?topicId:undefined,auto};
+ const h=history();h.push(record);try{localStorage.setItem(HISTORY,JSON.stringify(h.slice(-100)))}catch{}localStorage.removeItem(STORE);
+ if(topicId>=0){const tb=topicBest();const prev=tb[topicId];if(prev==null||record.percent>prev){tb[topicId]=record.percent;try{localStorage.setItem(TOPICBEST,JSON.stringify(tb))}catch{}}}
+ result(record);
+}
+function result(r){
+ app.replaceChildren();const hero=el('section','hero',null,app);el('div','eyebrow','Your result',hero);
+ const title=r.topicId!=null?`Kết quả phần ${r.topicId+1}: ${TOPICS[r.topicId].name}`:'Kết quả bài làm';
+ el('h1',null,title,hero);el('div','big',`${r.score}/${r.total}`,hero);el('p','m',`Độ chính xác ${r.percent}% · ${r.auto?'Tự động nộp do hết giờ':'Đã nộp bài'}`,hero);
+ const g=el('div','grid',null,app);[[r.score,'Câu đúng'],[r.total-r.score,'Câu sai'],[r.percent+'%','Tỷ lệ chính xác'],[r.wrong.length,'Câu cần ôn']].forEach(([v,l])=>{const c=el('div','stat',null,g);el('span','m',l,c);el('strong',null,v,c)});
+ const p=el('section','panel',null,app);el('h2',null,'Phân tích câu trả lời',p);r.wrong.forEach(n=>{const row=el('div','review-row',null,p);el('b',null,`Câu ${n}: ${Q[n-1][0]}`,row);el('p','m',`Đáp án đúng: ${L[Q[n-1][2].toLowerCase().charCodeAt(0)-97]}. ${Q[n-1][1].split('|')[Q[n-1][2].toLowerCase().charCodeAt(0)-97]}`,row);el('p','m',Q[n-1][3],row)});
+ if(!r.wrong.length)el('p','m','Tuyệt vời! Bạn đã trả lời đúng tất cả câu hỏi.',p);
+ const a=el('div','actions',null,app);
+ if(r.topicId!=null)btn(a,'Làm lại phần này (xáo trộn mới)','primary',()=>startTopic(r.topicId));
+ else btn(a,'Ôn các câu sai','primary',startWrong);
+ if(r.topicId!=null)btn(a,'Chọn chủ đề khác','ghost',topicMenu);
+ else btn(a,'Thi lại (xáo trộn mới)','ghost',()=>start(r.mode==='exam'?'exam':'practice',true));
+ btn(a,'Về trang chủ','ghost',menu);
+}
+menu();
+</script></body></html>

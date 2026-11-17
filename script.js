@@ -14,11 +14,12 @@ const defaultEngines = [
     { id: 'notes', name: 'Note (Ghi chú)', color: '#f59e0b', borderColor: '#f59e0b', type: 'builtin', url: 'notes' },
     { id: 'camera', name: 'Camera', color: '#6366f1', borderColor: '#6366f1', type: 'builtin', url: 'camera' },
     { id: 'matrix', name: 'Định thức (Ma trận)', color: '#7c3aed', borderColor: '#7c3aed', type: 'builtin', url: 'matrix' },
-    { id: 'cpp', name: 'Học C++', color: '#2563eb', borderColor: '#2563eb', type: 'builtin', url: 'cpp' }
+    { id: 'cpp', name: 'Học C++', color: '#2563eb', borderColor: '#2563eb', type: 'builtin', url: 'cpp' },
+    { id: 'quiz', name: 'Ôn thi trắc nghiệm', color: '#2e7d62', borderColor: '#2e7d62', type: 'builtin', url: 'quiz' }
 ]; 
 
 // Các nút hệ thống (mở workspace riêng, không thể xóa)
-const SYSTEM_ENGINE_IDS = ['notes', 'camera', 'matrix', 'cpp'];
+const SYSTEM_ENGINE_IDS = ['notes', 'camera', 'matrix', 'cpp', 'quiz'];
 
 // --- Công tắc hiển thị: Game Dino & Nhân vật pixel ---
 function applyDisplayToggles() {
@@ -382,6 +383,8 @@ function toggleMainElements(show) {
     if (matrixWs) matrixWs.style.display = 'none';
     const cppWs = document.getElementById('cppWorkspace');
     if (cppWs) cppWs.style.display = 'none';
+    const quizWs = document.getElementById('quizWorkspace');
+    if (quizWs) quizWs.style.display = 'none';
 }
 
 // --- Tiện ích Đồng hồ & Thời tiết ---
@@ -652,6 +655,7 @@ function performSearch(engineId) {
     if (engineId === 'camera') { openCameraWorkspace(); return; }
     if (engineId === 'matrix') { openMatrixWorkspace(); return; }
     if (engineId === 'cpp') { openCppWorkspace(); return; }
+    if (engineId === 'quiz') { openQuizWorkspace(); return; }
 
     const query = document.getElementById('searchInput').value.trim();
     const engine = getEngines().find(e => e.id === engineId);

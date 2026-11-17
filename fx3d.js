@@ -30,7 +30,8 @@
     var WS = { notes: ['notesWorkspace', 'openNotesWorkspace', 'closeNotesWorkspace'],
                camera: ['cameraWorkspace', 'openCameraWorkspace', 'closeCameraWorkspace'],
                matrix: ['matrixWorkspace', 'openMatrixWorkspace', 'closeMatrixWorkspace'],
-               cpp: ['cppWorkspace', 'openCppWorkspace', 'closeCppWorkspace'] };
+               cpp: ['cppWorkspace', 'openCppWorkspace', 'closeCppWorkspace'],
+               quiz: ['quizWorkspace', 'openQuizWorkspace', 'closeQuizWorkspace'] };
     function current() {
         for (var k in WS) { var el = document.getElementById(WS[k][0]); if (el && el.style.display === 'block') return k; }
         return 'home';

@@ -1,0 +1,15 @@
+/* Workspace Ôn thi trắc nghiệm: khung theo bảng màu của web, nội dung là quiz.html trong iframe */
+#quizWorkspace {
+    display: none; width: 100%; max-width: 1100px; margin: 64px 0 20px; padding: 20px 20px 16px; text-align: left;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); color: #202124;
+}
+body.dark-mode #quizWorkspace { color: #e8eaed; }
+.qz-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.qz-header h2 { margin: 0; font-size: 20px; color: var(--brand); }
+body.dark-mode .qz-header h2 { color: var(--brand-light); }
+.qz-header .logout-btn { white-space: nowrap; }
+.quiz-frame { display: block; width: 100%; height: calc(100vh - 170px); height: calc(100dvh - 170px); min-height: 560px; border: 0; border-radius: var(--r-md); background: transparent; }
+@media (max-width: 600px) {
+    #quizWorkspace { padding: 14px 10px 10px; margin-top: 56px; }
+    .quiz-frame { height: calc(100dvh - 150px); min-height: 520px; }
+}

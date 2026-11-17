@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniSearchVN</title>
     <link rel="stylesheet" href="style.css?v=26">
-    <link rel="stylesheet" href="3d.css?v=3">
+    <link rel="stylesheet" href="3d.css?v=4">
+    <link rel="stylesheet" href="quiz.css?v=1">
     <!-- Thư viện Kéo thả SortableJS -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js" defer></script>
     <script src="character_model.js?v=3" defer></script>
-    <script src="scene3d.js?v=3" defer></script>
-    <script src="fx3d.js" defer></script>
+    <script src="scene3d.js?v=5" defer></script>
+    <script src="fx3d.js?v=2" defer></script>
 </head>
 <body>
 
@@ -392,11 +393,20 @@
             <main class="cpp-main" id="cppMain"></main>
         </div>
     </div>
+    <!-- Workspace Ôn thi trắc nghiệm (quiz.html nhúng trong khung, tải khi mở lần đầu) -->
+    <div id="quizWorkspace">
+        <div class="qz-header">
+            <h2>📋 Ôn thi trắc nghiệm</h2>
+            <button class="logout-btn" id="quizCloseBtn">✕ Đóng</button>
+        </div>
+        <iframe id="quizFrame" class="quiz-frame" title="Ôn thi trắc nghiệm Kiến trúc máy tính"></iframe>
+    </div>
     <div class="mx-toast" id="cppToast" role="status" aria-live="polite"></div>
 
     <div class="mx-toast" id="mxToast" role="status" aria-live="polite"></div>
 
-    <script src="script.js?v=25"></script>
+    <script src="script.js?v=26"></script>
+    <script src="quiz.js?v=1"></script>
     <!-- Chữ ký chìm -->
     <div class="stealth-signature">Designed & Developed by Hồ Hiếu Nghĩa</div>
 
@@ -411,6 +421,7 @@
     <button type="button" data-dock="camera"><span aria-hidden="true">📷</span>Camera</button>
     <button type="button" data-dock="matrix"><span aria-hidden="true">🔢</span>Ma trận</button>
     <button type="button" data-dock="cpp"><span aria-hidden="true">💻</span>Học C++</button>
+    <button type="button" data-dock="quiz"><span aria-hidden="true">📋</span>Ôn thi</button>
     <button type="button" data-dock="settings"><span aria-hidden="true">⚙️</span>Cài đặt</button>
 </nav>
 <!-- Thẻ nhân vật Pixel và khung thoại -->
