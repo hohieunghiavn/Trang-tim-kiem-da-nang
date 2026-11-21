@@ -6,7 +6,7 @@
         toggleMainElements(false);
         document.getElementById('quizWorkspace').style.display = 'block';
         var f = document.getElementById('quizFrame');
-        if (f && !f.getAttribute('src')) f.setAttribute('src', 'quiz.html?v=1');
+        if (f && !f.getAttribute('src')) f.setAttribute('src', 'quiz.html?v=2');
         window.scrollTo({ top: 0 });
     }
     function closeQuizWorkspace() {
